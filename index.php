@@ -41,31 +41,38 @@ $students = fetchStudents($conn, $_GET['search'] ?? '');
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-/*            width: max-content;*/
+            width: max-content ;
         }
-        .welcome {
-            text-align: center; 
-            direction: rtl;
-        }
-        @media (max-width: 576px) {
-            .welcome h2 {
-                font-size: 1.5rem; /* Resize for smaller devices */
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 20px;
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+                width: 100%;
             }
-
+            .table{
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="welcome">
-        <?php
-            $sql = "SELECT * FROM `users` WHERE id='$_SESSION[user_id]'";
-            $query = $conn->query($sql);
-            $result = mysqli_fetch_assoc($query);
-            $username = $result['username'];
-        ?>
-        <h2>اهلا بك يا  <span style="color: #28a745;"><?php echo htmlspecialchars($username) ?></span></h2>
+    <div class="welcome" style="text-align: center; direction: rtl;">
+        <font>
+            <?php
+                $sql = "SELECT * FROM `users` WHERE id='$_SESSION[user_id]'";
+                $query = $conn->query($sql);
+                $result = mysqli_fetch_assoc($query);
+                $username = $result['username'];
+            ?>
+            <h2>اهلا بك يا  <span style="color: #28a745;"><?php echo $username?></span></h2>
+        </font>
         <br>
         <a href="logout.php" class="btn btn-danger">تسجيل خروج</a>
     </div>
@@ -84,7 +91,7 @@ $students = fetchStudents($conn, $_GET['search'] ?? '');
     <?php if (isset($_GET['error'])) echo "<div class='alert alert-danger'>{$_GET['error']}</div>"; ?>
     <?php if (isset($_GET['succ'])) echo "<div class='alert alert-success'>{$_GET['succ']}</div>"; ?>
 
-    <table class="table table-striped table-responsive">
+    <table class="table table-striped">
         <thead>
             <tr>
                 <th>ID</th>
@@ -94,6 +101,14 @@ $students = fetchStudents($conn, $_GET['search'] ?? '');
                 <th>الصف الدراسي</th>
                 <th>الشهور المدفوعة</th>
                 <th>العمليات</th>
+                <th><button class="btn btn-danger" id="deleteButton">حذف الكل</button></th>
+                <script>
+                    document.getElementById('deleteButton').addEventListener('click', function() {
+                        if (confirm('هل أنت متأكد أنك تريد حذف جميع الطلاب؟')) {
+                            window.location.href = 'delete_students.php?action=delete';
+                        }
+                    });
+                </script>
             </tr>
         </thead>
         <tbody>
@@ -108,13 +123,51 @@ $students = fetchStudents($conn, $_GET['search'] ?? '');
                     <td>
                         <a href="edit_student.php?id=<?= $row['id'] ?>" class="btn btn-warning">تعديل</a>
                         <a href="delete_student.php?id=<?= $row['id'] ?>" class="btn btn-danger">حذف</a>
-                        <a href="generate_report.php?id=<?= $row['id'] ?>" class="btn btn-info">تقرير</a>
+                        <a href="#" class="btn btn-success whatsapp-button" 
+                           data-id="<?= htmlspecialchars($row['id']) ?>"
+                           data-name="<?= htmlspecialchars($row['name']) ?>"
+                           data-phone="<?= htmlspecialchars($row['phone']) ?>"
+                           data-exam_score="<?= htmlspecialchars($row['exam_score']) ?>"
+                           data-grade="<?= htmlspecialchars($row['grade']) ?>"
+                           data-months_paid="<?= htmlspecialchars($row['months_paid']) ?>">
+                           WhatsApp
+                        </a>
+                        <a href="report.php?id=<?= $row['id'] ?>" class="btn btn-info">تقرير</a>
+                        <!-- <a href="generate_report.php?id=<?= $row['id'] ?>" class="btn btn-info">تقرير</a> -->
                     </td>
                 </tr>
             <?php endwhile; ?>
         </tbody>
     </table>
 </div>
+<script>
+document.querySelectorAll('.whatsapp-button').forEach(button => {
+    button.onclick = function() {
+        var studentId = this.getAttribute('data-id');
+        var studentName = this.getAttribute('data-name');
+        var studentPhone = this.getAttribute('data-phone');
+        var studentScore = this.getAttribute('data-exam_score');
+        var studentGrade = this.getAttribute('data-grade');
+        var studentMonthsPaid = this.getAttribute('data-months_paid');
+
+        // إعداد الرسالة لتشمل جميع البيانات
+        var message = encodeURIComponent(
+            "أهلا وسهلا بحضرتك,\n" +
+            "دي بياناتك:\n" +
+            "المعرف: " + studentId + "\n" +
+            "الاسم: " + studentName + "\n" +
+            "الصف: " + studentGrade + "\n" +
+            "الدرجات: " + studentScore + "\n" +
+            "الأشهر المدفوعة: " + studentMonthsPaid
+        );
+
+        var url = "https://wa.me/" + studentPhone + "?text=" + message;
+
+        window.open(url, "_blank");
+    };
+});
+
+</script>
 
 </body>
 </html>
