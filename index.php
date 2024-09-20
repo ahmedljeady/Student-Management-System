@@ -1,3 +1,6 @@
+# هذا المشروع محمي بموجب ترخيص CC BY-NC
+# يمنع استخدامه لأغراض تجارية أو ضارة
+
 <?php
 require('config.php');
 session_start();
