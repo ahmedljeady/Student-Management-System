@@ -1,0 +1,11 @@
+{
+    "name": "wael/amin",
+    "require": {
+        "mpdf/mpdf": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "Wael\\Amin\\": "src/"
+        }
+    }
+}
