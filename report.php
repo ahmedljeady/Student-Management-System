@@ -32,6 +32,7 @@ $student = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <title>تقرير الطالب</title>
     <style>
         body {
@@ -39,6 +40,7 @@ $student = $result->fetch_assoc();
             display: flex;
             justify-content: center;
             align-items: center;
+            font-family: 'Cairo', sans-serif;
             height: 100vh; /* لتوسيع الصفحة لملء الشاشة */
             margin: 0;
         }
@@ -84,6 +86,9 @@ $student = $result->fetch_assoc();
     </div>
     <div class="mb-3">
         <strong>الشهور المدفوعة:</strong> <?= htmlspecialchars($student['months_paid']) ?>
+    </div>
+    <div class="mb-3">
+        <strong>بتاريخ:</strong> <?= date('Y-m-d') ?>
     </div>
 
     <div class="no-print">
